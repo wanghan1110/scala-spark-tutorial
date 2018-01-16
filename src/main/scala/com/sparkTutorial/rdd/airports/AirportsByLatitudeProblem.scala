@@ -1,5 +1,8 @@
 package com.sparkTutorial.rdd.airports
 
+import com.sparkTutorial.commons.Utils
+import org.apache.spark.{SparkConf, SparkContext}
+
 object AirportsByLatitudeProblem {
 
   def main(args: Array[String]) {
@@ -16,5 +19,15 @@ object AirportsByLatitudeProblem {
        "Tofino", 49.082222
        ...
      */
+    val conf = new SparkConf().setAppName("attitude").setMaster("local[2]")
+    val sc = new SparkContext(conf)
+
+    val airports = sc.textFile("in/airports.text")
+    val latGt40 = airports.filter(line => BigDecimal(line.split(Utils.COMMA_DELIMITER)(6)) > 40)
+    val airportNameAlt = latGt40.map(line => {
+      val splits = line.split(Utils.COMMA_DELIMITER)
+      splits(1) + "," + splits(6)
+    })
+    airportNameAlt.saveAsTextFile("out/airports_by_latitude.text")
   }
 }
