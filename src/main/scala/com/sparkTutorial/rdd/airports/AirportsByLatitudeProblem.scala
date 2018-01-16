@@ -1,6 +1,7 @@
 package com.sparkTutorial.rdd.airports
 
 import com.sparkTutorial.commons.Utils
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object AirportsByLatitudeProblem {
@@ -19,6 +20,7 @@ object AirportsByLatitudeProblem {
        "Tofino", 49.082222
        ...
      */
+    Logger.getLogger("org").setLevel(Level.ERROR)
     val conf = new SparkConf().setAppName("attitude").setMaster("local[2]")
     val sc = new SparkContext(conf)
 
