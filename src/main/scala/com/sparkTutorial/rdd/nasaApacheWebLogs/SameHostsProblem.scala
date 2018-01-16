@@ -1,5 +1,8 @@
 package com.sparkTutorial.rdd.nasaApacheWebLogs
 
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.{SparkConf, SparkContext}
+
 object SameHostsProblem {
 
   def main(args: Array[String]) {
@@ -19,5 +22,23 @@ object SameHostsProblem {
 
        Make sure the head lines are removed in the resulting RDD.
      */
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    val conf = new SparkConf().setAppName("sameHost").setMaster("local[1]")
+    val sc = new SparkContext(conf)
+
+    val rdd_0701 = sc.textFile("in/nasa_19950701.tsv").filter(x => isNotHeader(x))
+    val rdd_0801 = sc.textFile("in/nasa_19950801.tsv").filter(x => isNotHeader(x))
+
+    val host_0701 = rdd_0701.map(line => {
+      line.split("\t")(0)
+    })
+    val host_0801 = rdd_0801.map(line => {
+      line.split("\t")(0)
+    })
+    val same_host = host_0701.intersection(host_0801)
+    same_host.saveAsTextFile("out/nasa_logs_same_hosts.csv")
+  }
+  def isNotHeader(line: String): Boolean = {
+    !(line.startsWith("host") && line.endsWith("bytes"))
   }
 }
