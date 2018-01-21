@@ -1,5 +1,9 @@
 package com.sparkTutorial.sparkSql
 
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+
 
 object HousePriceProblem {
 
@@ -37,4 +41,26 @@ object HousePriceProblem {
         |................|.................|
         |................|.................|
          */
+  val PRICE = "Price SQ Ft"
+  def main(args: Array[String]) = {
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    val session = SparkSession.builder()
+      .master("local")
+      .appName("HousePrice")
+      .getOrCreate()
+
+    val dataframeReader = session.read
+    val realEstate = dataframeReader
+      .option("header", "true")
+      .option("inferSchema", value = true)
+      .csv("in/RealEstate.csv")
+
+    System.out.println("=== Print out ave price sq ft ===")
+    val locationPrice = realEstate.select("Location", PRICE)
+    val avgPrice = locationPrice.groupBy("Location").avg(PRICE)
+      .orderBy("avg(Price SQ Ft)")
+    avgPrice.show()
+
+    session.stop()
+  }
 }
