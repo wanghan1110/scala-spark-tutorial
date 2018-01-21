@@ -42,6 +42,7 @@ object HousePriceProblem {
         |................|.................|
          */
   val PRICE = "Price SQ Ft"
+  val AVGPRICE = "avg(Price SQ Ft)"
   def main(args: Array[String]) = {
     Logger.getLogger("org").setLevel(Level.ERROR)
     val session = SparkSession.builder()
@@ -58,7 +59,8 @@ object HousePriceProblem {
     System.out.println("=== Print out ave price sq ft ===")
     val locationPrice = realEstate.select("Location", PRICE)
     val avgPrice = locationPrice.groupBy("Location").avg(PRICE)
-      .orderBy("avg(Price SQ Ft)")
+        .withColumnRenamed("avg(Price SQ Ft)", AVGPRICE)
+        .orderBy("avg(Price SQ Ft)")
     avgPrice.show()
 
     session.stop()
