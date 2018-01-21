@@ -59,8 +59,8 @@ object HousePriceProblem {
     System.out.println("=== Print out ave price sq ft ===")
     val locationPrice = realEstate.select("Location", PRICE)
     val avgPrice = locationPrice.groupBy("Location").avg(PRICE)
-        .withColumnRenamed("avg(Price SQ Ft)", AVGPRICE)
-        .orderBy("avg(Price SQ Ft)")
+        .withColumnRenamed(AVGPRICE, "Avg_Price")
+        .orderBy("Avg_Price")
     avgPrice.show()
 
     session.stop()
